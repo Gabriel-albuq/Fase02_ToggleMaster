@@ -1,0 +1,27 @@
+# Variáveis de ambiente / segredos
+.env
+*.env
+!.env.example
+
+# Go
+/auth-service/app
+/evaluation-service/app
+*.exe
+*.test
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Docker
+*.log
+
+# Editor / SO
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

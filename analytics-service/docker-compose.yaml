@@ -1,0 +1,17 @@
+services:
+  analytics-service:
+    image: analytics-service:latest
+    container_name: analytics-service
+    build: .
+    ports:
+      - "8040:${PORT}"
+    environment:
+      DATABASE_URL: postgres://${DB_USERNAME}:${DB_PASSWORD}@postgres-db:5432/${DB_DATABASE}
+      PORT: ${PORT}
+      AUTH_SERVICE_URL: ${AUTH_SERVICE_URL}
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+
+volumes:
+  pgdata:

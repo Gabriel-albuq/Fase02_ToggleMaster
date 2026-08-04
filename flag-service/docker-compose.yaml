@@ -1,0 +1,39 @@
+services:
+  postgres-db:
+    image: postgres:18.4-alpine3.24
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    ports:
+      - "5434:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME}"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+
+  adminer:
+    image: adminer
+    ports:
+      - "8091:8080"
+
+  flag-service:
+    image: flag-service:latest
+    container_name: flag-service
+    build: .
+    ports:
+      - "8090:${PORT}"
+    environment:
+      DATABASE_URL: postgres://${DB_USERNAME}:${DB_PASSWORD}@postgres-db:5432/${DB_DATABASE}
+      PORT: ${PORT}
+      AUTH_SERVICE_URL: ${AUTH_SERVICE_URL}
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+
+volumes:
+  pgdata:

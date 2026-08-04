@@ -1,0 +1,27 @@
+services:
+  redis:
+    image: redis:8.10-alpine
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+
+  evaluation-service:
+    image: evaluation-service:latest
+    container_name: evaluation-service
+    build: .
+    ports:
+      - "8060:${PORT}"
+    environment:
+      PORT: ${PORT}
+      REDIS_URL: ${REDIS_URL}
+      FLAG_SERVICE_URL: ${FLAG_SERVICE_URL}
+      TARGETING_SERVICE_URL: ${TARGETING_SERVICE_URL}
+      SERVICE_API_KEY: ${SERVICE_API_KEY}
+
+    depends_on:
+      redis:
+        condition: service_healthy
