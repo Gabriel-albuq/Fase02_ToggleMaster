@@ -10,6 +10,6 @@ COPY . .
 RUN adduser --disabled-password --gecos "" --uid 1000 appuser
 USER appuser
 
-EXPOSE 8003
+EXPOSE 8005
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8003", "app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8005", "app:app"]

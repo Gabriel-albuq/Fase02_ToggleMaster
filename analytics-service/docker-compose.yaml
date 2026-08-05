@@ -4,14 +4,11 @@ services:
     container_name: analytics-service
     build: .
     ports:
-      - "8040:${PORT}"
+      - "8030:${PORT}"
     environment:
-      DATABASE_URL: postgres://${DB_USERNAME}:${DB_PASSWORD}@postgres-db:5432/${DB_DATABASE}
       PORT: ${PORT}
-      AUTH_SERVICE_URL: ${AUTH_SERVICE_URL}
-    depends_on:
-      postgres-db:
-        condition: service_healthy
-
-volumes:
-  pgdata:
+      AWS_SQS_URL: ${AWS_SQS_URL}
+      AWS_DYNAMODB_TABLE: ${AWS_DYNAMODB_TABLE}
+      AWS_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
