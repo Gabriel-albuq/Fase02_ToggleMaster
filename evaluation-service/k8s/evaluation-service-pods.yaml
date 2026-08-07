@@ -3,6 +3,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: redis-evaluation-service
+  namespace: evaluation-service
   labels:
     app: evaluation-service
     instance: redis-evaluation-service
@@ -10,6 +11,13 @@ spec:
   containers:
     - name: redis-evaluation-service
       image: redis:8.10-alpine
+      resources:
+        requests:
+          cpu: "50m"
+          memory: "64Mi"
+        limits:
+          cpu: "200m"
+          memory: "128Mi"
       ports:
         - containerPort: 6379
 
@@ -19,13 +27,23 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: evaluation-service
+  namespace: evaluation-service
   labels:
     app: evaluation-service
     instance: app-evaluation-service
 spec:
   containers:
     - name: evaluation-service
-      image: 798350130470.dkr.ecr.us-east-1.amazonaws.com/evaluation-service:latest
+      image: evaluation-service:local                                                # Local
+      # image: 798350130470.dkr.ecr.us-east-1.amazonaws.com/evaluation-service:latest # Nuvem
+      imagePullPolicy: Never
+      resources:
+        requests:
+          cpu: "100m"
+          memory: "64Mi"
+        limits:
+          cpu: "250m"
+          memory: "128Mi"
       ports:
         - containerPort: 8004
       env:
@@ -33,48 +51,43 @@ spec:
           value: "8004"
         - name: REDIS_URL
           valueFrom:
-            secretKeyRef:
-              name: evaluation-service-secrets
+            configMapKeyRef:
+              name: configmap-evaluation-service
               key: REDIS_URL
         - name: FLAG_SERVICE_URL
           valueFrom:
-            secretKeyRef:
-              name: evaluation-service-secrets
+            configMapKeyRef:
+              name: configmap-evaluation-service
               key: FLAG_SERVICE_URL
         - name: TARGETING_SERVICE_URL
           valueFrom:
-            secretKeyRef:
-              name: evaluation-service-secrets
+            configMapKeyRef:
+              name: configmap-evaluation-service
               key: TARGETING_SERVICE_URL
         - name: SERVICE_API_KEY
           valueFrom:
             secretKeyRef:
-              name: evaluation-service-secrets
+              name: opaque-evaluation-service
               key: SERVICE_API_KEY
         - name: AWS_SQS_URL
           valueFrom:
-            secretKeyRef:
-              name: evaluation-service-secrets
+            configMapKeyRef:
+              name: configmap-evaluation-service
               key: AWS_SQS_URL
-        - name: AWS_DYNAMODB_TABLE
-          valueFrom:
-            secretKeyRef:
-              name: evaluation-service-secrets
-              key: AWS_DYNAMODB_TABLE
         - name: AWS_REGION
           valueFrom:
-            secretKeyRef:
-              name: evaluation-service-secrets
+            configMapKeyRef:
+              name: configmap-evaluation-service
               key: AWS_REGION
-#        Passar via IRSA (IAM Role for Service Account)
-#        - name: AWS_ACCESS_KEY_ID
-#          valueFrom:
-#            secretKeyRef:
-#              name: evaluation-service-secrets
-#              key: AWS_ACCESS_KEY_ID
-#        - name: AWS_SECRET_ACCESS_KEY
-#          valueFrom:
-#            secretKeyRef:
-#              name: evaluation-service-secrets
-#              key: AWS_SECRET_ACCESS_KEY
+        # Pode passar via IRSA (IAM Role for Service Account)
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: opaque-evaluation-service
+              key: AWS_ACCESS_KEY_ID
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: opaque-evaluation-service
+              key: AWS_SECRET_ACCESS_KEY
 

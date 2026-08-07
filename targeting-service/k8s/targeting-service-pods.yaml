@@ -3,6 +3,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: postgres-db-targeting-service
+  namespace: targeting-service
   labels:
     app: targeting-service
     instance: postgres-db-targeting-service
@@ -10,23 +11,30 @@ spec:
   containers:
     - name: postgres-db-targeting-service
       image: postgres:18.4-alpine3.24
+      resources:
+        requests:
+          cpu: "100m"
+          memory: "256Mi"
+        limits:
+          cpu: "500m"
+          memory: "512Mi"
       ports:
         - containerPort: 5432
       env:
         - name: POSTGRES_USER
           valueFrom:
-            secretKeyRef:
-              name: targeting-service-secrets
+            configMapKeyRef:
+              name: configmap-targeting-service
               key: DB_USERNAME
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: targeting-service-secrets
+              name: opaque-targeting-service
               key: DB_PASSWORD
         - name: POSTGRES_DB
           valueFrom:
-            secretKeyRef:
-              name: targeting-service-secrets
+            configMapKeyRef:
+              name: configmap-targeting-service
               key: DB_DATABASE
       volumeMounts:
         - name: pgdata-targeting-service
@@ -34,7 +42,7 @@ spec:
   volumes:
     - name: pgdata-targeting-service
       persistentVolumeClaim:
-        claimName: pgdata-targeting-service-pvc
+        claimName: pvc-pgdata-targeting-service
 
 
 ---
@@ -43,13 +51,23 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: targeting-service
+  namespace: targeting-service
   labels:
     app: targeting-service
     instance: app-targeting-service
 spec:
   containers:
     - name: targeting-service
-      image: 798350130470.dkr.ecr.us-east-1.amazonaws.com/targeting-service:latest
+      image: targeting-service:local                                                # Local
+      # image: 798350130470.dkr.ecr.us-east-1.amazonaws.com/targeting-service:latest # Nuvem
+      imagePullPolicy: Never
+      resources:
+        requests:
+          cpu: "100m"
+          memory: "128Mi"
+        limits:
+          cpu: "300m"
+          memory: "256Mi"
       ports:
         - containerPort: 8003
       env:
@@ -58,11 +76,11 @@ spec:
         - name: DATABASE_URL
           valueFrom:
             secretKeyRef:
-              name: targeting-service-secrets
+              name: opaque-targeting-service
               key: DB_URL
         - name: AUTH_SERVICE_URL
           valueFrom:
-            secretKeyRef:
-              name: targeting-service-secrets
+            configMapKeyRef:
+              name: configmap-targeting-service
               key: AUTH_SERVICE_URL
     # Fazer dependencia (equivalente a depends_on no docker)
