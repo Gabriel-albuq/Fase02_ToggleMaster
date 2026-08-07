@@ -5,6 +5,7 @@ metadata:
   name: analytics-service
   labels:
     app: analytics-service
+    instance: app-analytics-service
 spec:
   containers:
     - name: analytics-service

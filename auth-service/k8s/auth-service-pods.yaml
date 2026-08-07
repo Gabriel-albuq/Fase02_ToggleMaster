@@ -4,7 +4,8 @@ kind: Pod
 metadata:
   name: postgres-db-auth-service
   labels:
-    app: postgres-db-auth-service
+    app: auth-service
+    instance: postgres-db-auth-service
 spec:
   containers:
     - name: postgres-db-auth-service
@@ -36,7 +37,7 @@ spec:
         claimName: pgdata-auth-service-pvc
 
 
-# ===========================================================================
+---
 # auth-service
 apiVersion: v1
 kind: Pod
@@ -44,6 +45,7 @@ metadata:
   name: auth-service
   labels:
     app: auth-service
+    instance: app-auth-service
 spec:
   containers:
     - name: auth-service

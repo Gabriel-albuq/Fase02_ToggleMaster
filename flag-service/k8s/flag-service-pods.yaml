@@ -4,7 +4,8 @@ kind: Pod
 metadata:
   name: postgres-db-flag-service
   labels:
-    app: postgres-db-flag-service
+    app: flag-service
+    instance: postgres-db-flag-service
 spec:
   containers:
     - name: postgres-db-flag-service
@@ -36,7 +37,7 @@ spec:
         claimName: pgdata-flag-service-pvc
 
 
-# ===========================================================================
+---
 # flag-service
 apiVersion: v1
 kind: Pod
@@ -44,6 +45,7 @@ metadata:
   name: flag-service
   labels:
     app: flag-service
+    instance: app-flag-service
 spec:
   containers:
     - name: flag-service

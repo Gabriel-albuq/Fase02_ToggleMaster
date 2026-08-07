@@ -4,7 +4,8 @@ kind: Pod
 metadata:
   name: redis-evaluation-service
   labels:
-    app: redis-evaluation-service
+    app: evaluation-service
+    instance: redis-evaluation-service
 spec:
   containers:
     - name: redis-evaluation-service
@@ -12,7 +13,7 @@ spec:
       ports:
         - containerPort: 6379
 
-# ===========================================================================
+---
 # evaluation-service
 apiVersion: v1
 kind: Pod
@@ -20,6 +21,7 @@ metadata:
   name: evaluation-service
   labels:
     app: evaluation-service
+    instance: app-evaluation-service
 spec:
   containers:
     - name: evaluation-service
