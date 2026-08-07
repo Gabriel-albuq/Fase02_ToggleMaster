@@ -17,8 +17,8 @@ services:
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
 
 # Auth Service =================================================================
-  postgres-db_auth-service:
-    container_name: postgres-db_auth-service
+  postgres-db-auth-service:
+    container_name: postgres-db-auth-service
     image: postgres:18.4-alpine3.24
     environment:
       POSTGRES_USER: ${DB_USERNAME}
@@ -27,7 +27,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - pgdata_auth_service:/var/lib/postgresql
+      - pgdata-auth-service:/var/lib/postgresql
       - ./auth-service/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME}"]
@@ -43,13 +43,12 @@ services:
     ports:
       - "8080:${PORT_AUTH_SERVICE}"
     environment:
-      DATABASE_URL: postgres://${DB_USERNAME}:${DB_PASSWORD}@postgres-db_auth-service:5432/${DB_DATABASE_AUTH_SERVICE}
+      DATABASE_URL: postgres://${DB_USERNAME}:${DB_PASSWORD}@postgres-db-auth-service:5432/${DB_DATABASE_AUTH_SERVICE}
       MASTER_KEY: ${MASTER_KEY}
       PORT: ${PORT_AUTH_SERVICE}
     depends_on:
-      postgres-db_auth-service:
+      postgres-db-auth-service:
         condition: service_healthy
-
 
 # Evaluation Service =================================================================
   redis:
@@ -86,8 +85,8 @@ services:
         condition: service_healthy
 
 # Flag Service =================================================================
-  postgres-db_flag-service:
-    container_name: postgres-db_flag-service
+  postgres-db-flag-service:
+    container_name: postgres-db-flag-service
     image: postgres:18.4-alpine3.24
     environment:
       POSTGRES_USER: ${DB_USERNAME}
@@ -96,7 +95,7 @@ services:
     ports:
       - "5434:5432"
     volumes:
-      - pgdata_flag_service:/var/lib/postgresql
+      - pgdata-flag-service:/var/lib/postgresql
       - ./flag-service/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME}"]
@@ -112,16 +111,16 @@ services:
     ports:
       - "8090:${PORT_FLAG_SERVICE}"
     environment:
-      DATABASE_URL: postgres://${DB_USERNAME}:${DB_PASSWORD}@postgres-db_flag-service:5432/${DB_DATABASE_FLAG_SERVICE}
+      DATABASE_URL: postgres://${DB_USERNAME}:${DB_PASSWORD}@postgres-db-flag-service:5432/${DB_DATABASE_FLAG_SERVICE}
       PORT: ${PORT_FLAG_SERVICE}
       AUTH_SERVICE_URL: ${AUTH_SERVICE_URL}
     depends_on:
-      postgres-db_flag-service:
+      postgres-db-flag-service:
         condition: service_healthy
 
 # Targeting Service =================================================================
-  postgres-db_targeting-service:
-    container_name: postgres-db_targeting-service
+  postgres-db-targeting-service:
+    container_name: postgres-db-targeting-service
     image: postgres:18.4-alpine3.24
     environment:
       POSTGRES_USER: ${DB_USERNAME}
@@ -130,7 +129,7 @@ services:
     ports:
       - "5435:5432"
     volumes:
-      - pgdata_targeting_service:/var/lib/postgresql
+      - pgdata-targeting-service:/var/lib/postgresql
       - ./targeting-service/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME}"]
@@ -146,14 +145,14 @@ services:
     ports:
       - "8073:${PORT_TARGETING_SERVICE}"
     environment:
-      DATABASE_URL: postgres://${DB_USERNAME}:${DB_PASSWORD}@postgres-db_targeting-service:5432/${DB_DATABASE_TARGETING_SERVICE}
+      DATABASE_URL: postgres://${DB_USERNAME}:${DB_PASSWORD}@postgres-db-targeting-service:5432/${DB_DATABASE_TARGETING_SERVICE}
       PORT: ${PORT_TARGETING_SERVICE}
       AUTH_SERVICE_URL: ${AUTH_SERVICE_URL}
     depends_on:
-      postgres-db_targeting-service:
+      postgres-db-targeting-service:
         condition: service_healthy
 
 volumes:
-  pgdata_auth_service:
-  pgdata_flag_service:
-  pgdata_targeting_service:
+  pgdata-auth-service:
+  pgdata-flag-service:
+  pgdata-targeting-service:

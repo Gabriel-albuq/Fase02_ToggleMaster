@@ -1,0 +1,44 @@
+# analytics-service
+apiVersion: v1
+kind: Pod
+metadata:
+  name: analytics-service
+  labels:
+    app: analytics-service
+spec:
+  containers:
+    - name: analytics-service
+      image: 798350130470.dkr.ecr.us-east-1.amazonaws.com/analytics-service:latest
+      ports:
+        - containerPort: 8005
+      env:
+        - name: PORT
+          value: "8005"
+        - name: AWS_SQS_URL
+          valueFrom:
+            secretKeyRef:
+              name: analytics-service-secrets
+              key: AWS_SQS_URL
+        - name: AWS_DYNAMODB_TABLE
+          valueFrom:
+            secretKeyRef:
+              name: analytics-service-secrets
+              key: AWS_DYNAMODB_TABLE
+        - name: AWS_REGION
+          valueFrom:
+            secretKeyRef:
+              name: analytics-service-secrets
+              key: AWS_REGION
+#        Passar via IRSA (IAM Role for Service Account)
+#        - name: AWS_ACCESS_KEY_ID
+#          valueFrom:
+#            secretKeyRef:
+#              name: analytics-service-secrets
+#              key: AWS_ACCESS_KEY_ID
+#        - name: AWS_SECRET_ACCESS_KEY
+#          valueFrom:
+#            secretKeyRef:
+#              name: analytics-service-secrets
+#              key: AWS_SECRET_ACCESS_KEY
+
+        

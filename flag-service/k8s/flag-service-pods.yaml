@@ -1,0 +1,66 @@
+# postgres-db-flag-service
+apiVersion: v1
+kind: Pod
+metadata:
+  name: postgres-db-flag-service
+  labels:
+    app: postgres-db-flag-service
+spec:
+  containers:
+    - name: postgres-db-flag-service
+      image: postgres:18.4-alpine3.24
+      ports:
+        - containerPort: 5432
+      env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: flag-service-secrets
+              key: DB_USERNAME
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: flag-service-secrets
+              key: DB_PASSWORD
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: flag-service-secrets
+              key: DB_DATABASE
+      volumeMounts:
+        - name: pgdata-flag-service
+          mountPath: /var/lib/postgresql
+  volumes:
+    - name: pgdata-flag-service
+      persistentVolumeClaim:
+        claimName: pgdata-flag-service-pvc
+
+
+# ===========================================================================
+# flag-service
+apiVersion: v1
+kind: Pod
+metadata:
+  name: flag-service
+  labels:
+    app: flag-service
+spec:
+  containers:
+    - name: flag-service
+      image: 798350130470.dkr.ecr.us-east-1.amazonaws.com/flag-service:latest
+      ports:
+        - containerPort: 8002
+      env:
+        - name: PORT
+          value: "8002"
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: flag-service-secrets
+              key: DB_URL
+        - name: AUTH_SERVICE_URL
+          valueFrom:
+            secretKeyRef:
+              name: flag-service-secrets
+              key: AUTH_SERVICE_URL
+    # Fazer dependencia (equivalente a depends_on no docker)

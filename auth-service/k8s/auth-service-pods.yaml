@@ -1,0 +1,66 @@
+# postgres-db-auth-service
+apiVersion: v1
+kind: Pod
+metadata:
+  name: postgres-db-auth-service
+  labels:
+    app: postgres-db-auth-service
+spec:
+  containers:
+    - name: postgres-db-auth-service
+      image: postgres:18.4-alpine3.24
+      ports:
+        - containerPort: 5432
+      env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: auth-service-secrets
+              key: DB_USERNAME
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: auth-service-secrets
+              key: DB_PASSWORD
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: auth-service-secrets
+              key: DB_DATABASE
+      volumeMounts:
+        - name: pgdata-auth-service
+          mountPath: /var/lib/postgresql
+  volumes:
+    - name: pgdata-auth-service
+      persistentVolumeClaim:
+        claimName: pgdata-auth-service-pvc
+
+
+# ===========================================================================
+# auth-service
+apiVersion: v1
+kind: Pod
+metadata:
+  name: auth-service
+  labels:
+    app: auth-service
+spec:
+  containers:
+    - name: auth-service
+      image: 798350130470.dkr.ecr.us-east-1.amazonaws.com/auth-service:latest
+      ports:
+        - containerPort: 8001
+      env:
+        - name: PORT
+          value: "8001"
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: auth-service-secrets
+              key: DB_URL
+        - name: MASTER_KEY
+          valueFrom:
+            secretKeyRef:
+              name: auth-service-secrets
+              key: MASTER_KEY
+    # Fazer dependencia (equivalente a depends_on no docker)

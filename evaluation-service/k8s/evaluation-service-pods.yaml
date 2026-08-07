@@ -1,0 +1,78 @@
+# redis-evaluation-service
+apiVersion: v1
+kind: Pod
+metadata:
+  name: redis-evaluation-service
+  labels:
+    app: redis-evaluation-service
+spec:
+  containers:
+    - name: redis-evaluation-service
+      image: redis:8.10-alpine
+      ports:
+        - containerPort: 6379
+
+# ===========================================================================
+# evaluation-service
+apiVersion: v1
+kind: Pod
+metadata:
+  name: evaluation-service
+  labels:
+    app: evaluation-service
+spec:
+  containers:
+    - name: evaluation-service
+      image: 798350130470.dkr.ecr.us-east-1.amazonaws.com/evaluation-service:latest
+      ports:
+        - containerPort: 8004
+      env:
+        - name: PORT
+          value: "8004"
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: evaluation-service-secrets
+              key: REDIS_URL
+        - name: FLAG_SERVICE_URL
+          valueFrom:
+            secretKeyRef:
+              name: evaluation-service-secrets
+              key: FLAG_SERVICE_URL
+        - name: TARGETING_SERVICE_URL
+          valueFrom:
+            secretKeyRef:
+              name: evaluation-service-secrets
+              key: TARGETING_SERVICE_URL
+        - name: SERVICE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: evaluation-service-secrets
+              key: SERVICE_API_KEY
+        - name: AWS_SQS_URL
+          valueFrom:
+            secretKeyRef:
+              name: evaluation-service-secrets
+              key: AWS_SQS_URL
+        - name: AWS_DYNAMODB_TABLE
+          valueFrom:
+            secretKeyRef:
+              name: evaluation-service-secrets
+              key: AWS_DYNAMODB_TABLE
+        - name: AWS_REGION
+          valueFrom:
+            secretKeyRef:
+              name: evaluation-service-secrets
+              key: AWS_REGION
+#        Passar via IRSA (IAM Role for Service Account)
+#        - name: AWS_ACCESS_KEY_ID
+#          valueFrom:
+#            secretKeyRef:
+#              name: evaluation-service-secrets
+#              key: AWS_ACCESS_KEY_ID
+#        - name: AWS_SECRET_ACCESS_KEY
+#          valueFrom:
+#            secretKeyRef:
+#              name: evaluation-service-secrets
+#              key: AWS_SECRET_ACCESS_KEY
+
