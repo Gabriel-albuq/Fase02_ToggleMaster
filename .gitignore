@@ -25,3 +25,18 @@ venv/
 .idea/
 .DS_Store
 Thumbs.db
+
+
+# Kubernets
+*-secrets.yml
+*-secrets.yaml
+!*-secrets.example.yml
+!*-secrets.example.yaml
+
+
+# Ajuda
+explicacao_deployment_kubernetes.txt
+comandos_run.txt
+
+# Coleções de API com credenciais reais nos headers
+requisicoes.yaml
