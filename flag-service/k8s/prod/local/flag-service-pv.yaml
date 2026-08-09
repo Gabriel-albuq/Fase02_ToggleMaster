@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-flag-service
+spec:
+  capacity:
+    storage: 50Mi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local
+  hostPath:
+    path: /data/flag-service/pgdata
+    type: DirectoryOrCreate

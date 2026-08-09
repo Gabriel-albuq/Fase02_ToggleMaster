@@ -34,9 +34,13 @@ Thumbs.db
 !*-secrets.example.yaml
 
 
-# Ajuda
+# Pessoais
 explicacao_deployment_kubernetes.txt
+explicacao_nginx_controller.txt
 comandos_run.txt
+POSTECH - Tech Challenge - Fase 2.pdf
+Prints.pptx
 
 # Coleções de API com credenciais reais nos headers
 requisicoes.yaml
+

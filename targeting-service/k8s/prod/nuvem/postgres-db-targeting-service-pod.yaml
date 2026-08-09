@@ -1,0 +1,45 @@
+# postgres-db-targeting-service
+apiVersion: v1
+kind: Pod
+metadata:
+  name: postgres-db-targeting-service
+  namespace: targeting-service
+  labels:
+    app: targeting-service
+    instance: postgres-db-targeting-service
+spec:
+  containers:
+    - name: postgres-db-targeting-service
+      image: postgres:18.4-alpine3.24
+      resources:
+        requests:
+          cpu: "100m"
+          memory: "256Mi"
+        limits:
+          cpu: "500m"
+          memory: "512Mi"
+      ports:
+        - containerPort: 5432
+      env:
+        - name: POSTGRES_USER
+          valueFrom:
+            configMapKeyRef:
+              name: configmap-targeting-service
+              key: DB_USERNAME
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: opaque-targeting-service
+              key: DB_PASSWORD
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: configmap-targeting-service
+              key: DB_DATABASE
+      volumeMounts:
+        - name: pgdata-targeting-service
+          mountPath: /var/lib/postgresql
+  volumes:
+    - name: pgdata-targeting-service
+      persistentVolumeClaim:
+        claimName: pvc-pgdata-targeting-service

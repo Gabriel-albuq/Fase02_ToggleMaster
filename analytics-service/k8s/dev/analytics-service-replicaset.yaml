@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: replicaset-analytics-service
+  labels:
+    app: analytics-service
+    instance: app-analytics-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: analytics-service
+      instance: app-analytics-service
+  template:
+    metadata:
+      labels:
+        app: analytics-service
+        instance: app-analytics-service
+    spec:
+      containers:
+        - name: analytics-service
+          image: analytics-service:local # Local
+          # image: 798350130470.dkr.ecr.us-east-1.amazonaws.com/analytics-service:latest # Nuvem
+          imagePullPolicy: Never
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "300m"
+              memory: "256Mi"
+          ports:
+            - containerPort: 8005
+          env:
+            - name: PORT
+              value: "8005"
+            - name: AWS_SQS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-analytics-service
+                  key: AWS_SQS_URL
+            - name: AWS_DYNAMODB_TABLE
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-analytics-service
+                  key: AWS_DYNAMODB_TABLE
+            - name: AWS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-analytics-service
+                  key: AWS_REGION
+            # Pode passar via IRSA (IAM Role for Service Account)
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: opaque-analytics-service
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: opaque-analytics-service
+                  key: AWS_SECRET_ACCESS_KEY
