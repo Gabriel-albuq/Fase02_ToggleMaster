@@ -32,6 +32,18 @@ spec:
               memory: "128Mi"
           ports:
             - containerPort: 8001
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8001
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8001
+            initialDelaySeconds: 10
+            periodSeconds: 15
           env:
             - name: PORT
               value: "8001"

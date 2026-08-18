@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: deployment-targenting-service
-  namespace: targenting-service
+  name: deployment-targeting-service
+  namespace: targeting-service
   labels:
-    app: targenting-service
-    instance: app-targenting-service
+    app: targeting-service
+    instance: app-targeting-service
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: targenting-service
-      instance: app-targenting-service
+      app: targeting-service
+      instance: app-targeting-service
   template:
     metadata:
       labels:
-        app: targenting-service
-        instance: app-targenting-service
+        app: targeting-service
+        instance: app-targeting-service
     spec:
       containers:
         - name: targeting-service
@@ -32,6 +32,18 @@ spec:
               memory: "256Mi"
           ports:
             - containerPort: 8003
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8003
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8003
+            initialDelaySeconds: 10
+            periodSeconds: 15
           env:
             - name: PORT
               value: "8003"

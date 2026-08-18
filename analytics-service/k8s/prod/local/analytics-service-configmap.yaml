@@ -7,3 +7,9 @@ data:
   AWS_SQS_URL: "https://sqs.us-east-1.amazonaws.com/798350130470/fiap-analytics-service"
   AWS_REGION: "us-east-1"
   AWS_DYNAMODB_TABLE: "ToggleMasterAnalytics"
+  # Aponta pro Service do dynamodb-local (mesmo namespace, por isso o nome
+  # curto "svc-dynamodb-local" resolve sem precisar do FQDN completo).
+  # So existe aqui em prod/local - em prod/nuvem essa chave nao existe,
+  # entao o app usa o DynamoDB real da AWS (mesmo mecanismo do app.py
+  # usado no docker-compose).
+  AWS_DYNAMODB_ENDPOINT_URL: "http://svc-dynamodb-local:8000"

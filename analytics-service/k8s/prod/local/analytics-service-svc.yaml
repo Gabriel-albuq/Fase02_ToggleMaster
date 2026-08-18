@@ -1,3 +1,23 @@
+# dynamodb-local
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-dynamodb-local
+  namespace: analytics-service
+  labels:
+    app: analytics-service
+    instance: svc-dynamodb-local
+spec:
+  type: ClusterIP
+  selector:
+    app: analytics-service
+    instance: dynamodb-local
+  ports:
+    - port: 8000
+      targetPort: 8000
+
+
+---
 # analytics-service
 apiVersion: v1
 kind: Service

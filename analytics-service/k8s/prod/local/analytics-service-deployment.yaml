@@ -32,6 +32,18 @@ spec:
               memory: "256Mi"
           ports:
             - containerPort: 8005
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8005
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8005
+            initialDelaySeconds: 10
+            periodSeconds: 15
           env:
             - name: PORT
               value: "8005"
@@ -45,6 +57,11 @@ spec:
                 configMapKeyRef:
                   name: configmap-analytics-service
                   key: AWS_DYNAMODB_TABLE
+            - name: AWS_DYNAMODB_ENDPOINT_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-analytics-service
+                  key: AWS_DYNAMODB_ENDPOINT_URL
             - name: AWS_REGION
               valueFrom:
                 configMapKeyRef:

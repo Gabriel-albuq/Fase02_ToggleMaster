@@ -1,0 +1,27 @@
+# dynamodb-local
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dynamodb-local
+  namespace: analytics-service
+  labels:
+    app: analytics-service
+    instance: dynamodb-local
+spec:
+  containers:
+    - name: dynamodb-local
+      image: amazon/dynamodb-local:latest
+      # "args" sobrescreve so o CMD da imagem (o ENTRYPOINT "java" continua).
+      # "-inMemory" evita persistir em disco - o mesmo ajuste feito no
+      # docker-compose, que resolveu o erro de permissao em volume
+      # (usuario nao-root da imagem sem permissao de escrita).
+      args: ["-jar", "DynamoDBLocal.jar", "-sharedDb", "-inMemory"]
+      resources:
+        requests:
+          cpu: "50m"
+          memory: "128Mi"
+        limits:
+          cpu: "200m"
+          memory: "256Mi"
+      ports:
+        - containerPort: 8000
