@@ -21,7 +21,7 @@ spec:
       containers:
         - name: flag-service
           # image: flag-service:local # Local
-          image: 798350130470.dkr.ecr.us-east-1.amazonaws.com/flag-service:latest # Nuvem
+          image: 370930247065.dkr.ecr.us-east-2.amazonaws.com/flag-service:latest # Nuvem
           resources:
             requests:
               cpu: "100m"

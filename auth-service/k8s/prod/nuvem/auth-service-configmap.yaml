@@ -4,6 +4,5 @@ metadata:
   name: configmap-auth-service
   namespace: auth-service
 data:
-  DB_HOST: "svc-postgres-db-auth-service"
   DB_USERNAME: "postgres"
   DB_DATABASE: "auth_db"

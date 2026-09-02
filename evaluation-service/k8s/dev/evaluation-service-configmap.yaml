@@ -7,5 +7,5 @@ data:
   REDIS_URL: "redis://svc-redis-evaluation-service:80"
   FLAG_SERVICE_URL: "http://svc-flag-service.flag-service.svc.cluster.local:80"
   TARGETING_SERVICE_URL: "http://svc-targeting-service.targeting-service.svc.cluster.local:80"
-  AWS_SQS_URL: "https://sqs.us-east-1.amazonaws.com/798350130470/fiap-analytics-service"
-  AWS_REGION: "us-east-1"
+  AWS_SQS_URL: "https://sqs.us-east-2.amazonaws.com/370930247065/sqs-analytics-service"
+  AWS_REGION: "us-east-2"
